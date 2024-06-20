@@ -14,6 +14,11 @@ config.read('config.ini')
 
 profile = sys.argv[1] if len(sys.argv) > 1 else 'default'
 
+if profile not in config:
+    print(f'Profile "\033[31m{profile}\033[0m" not found in config.ini')
+    print('Please make the profile using `\033[33mpython3 makeConfig.py <profile>\033[0m` or edit config.ini manually.')
+    sys.exit(1)
+
 SERVER_IP = config.get(profile, 'model_server_ip')
 PORT = config.get(profile, 'model_server_port')
 URL = f'http://{SERVER_IP}:{PORT}/generate_stream'
