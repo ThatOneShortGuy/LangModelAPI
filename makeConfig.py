@@ -31,7 +31,7 @@ def makeConfig(profile='default'):
     try:
         token = config[profile]['token']
     except KeyError:
-        token = input('Enter your token:\n')
+        token = input('Enter your Discord token:\n')
         cache_token = input('Cache token for future use? (y/n)\n').lower()
         if cache_token == 'y':
             config[profile]['token'] = token

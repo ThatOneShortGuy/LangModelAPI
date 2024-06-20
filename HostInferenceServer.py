@@ -6,6 +6,7 @@ from configparser import ConfigParser
 from pprint import pprint
 from threading import Thread
 from typing import Union
+from functools import reduce
 
 from flask import Flask, Response, jsonify, request
 
@@ -98,7 +99,8 @@ def generate_stream():
         
         print(f'max_new_tokens: {max_tokens-inp_size}')
         
-        gen = model(inp, max_tokens=max_tokens, stop=['<|im_start|>', '<|im_end|>'], stream=True)
+        stop = ['<|im_start|>', '<|im_end|>']
+        gen = model(inp, max_tokens=max_tokens, stop=stop, stream=True)
         if stream_all:
             yield f"Generating from {inp_size} tokens... This may take a while."
         text = ''
@@ -106,6 +108,10 @@ def generate_stream():
             isgen = False
             if stream_all:
                 text += g
+                if text.endswith(tuple(stop)):
+                    print('Exiting...')
+                    yield reduce(lambda s, stops: s.rstrip(stops), [text] + stop)
+                    break
                 yield text
             else:
                 yield g

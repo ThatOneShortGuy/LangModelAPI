@@ -57,9 +57,9 @@ class ModelHandler:
             num_tokens = input_ids.shape[-1]
             while True:
                 chunk, eos, _ = self.generator.stream()
-                yield chunk
-                if eos or (max_tokens is not None and num_tokens >= max_tokens):
+                if eos or (max_tokens is not None and num_tokens >= max_tokens) or (stop and chunk in stop):
                     break
+                yield chunk
                 num_tokens += 1
         else:
             return self.generator.generate_simple(text, self.settings, max_tokens if max_tokens is not None else self.model.config.max_seq_len, **kwargs)
